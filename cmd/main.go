@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
+	financeserver "github.com/VxVxN/my_finances/internal/server"
 	"log"
-	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "<h1>Hi there!!</h1>")
-}
-
 func main() {
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	server := financeserver.Init()
+	server.Handle("POST /order/create", server.Controller.CreateOrder)
+	server.Handle("POST /order/remove", server.Controller.RemoveOrder)
+	server.Handle("GET /orders", server.Controller.Orders)
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Cannot listen server: %v", err)
+	}
 }
