@@ -1,0 +1,19 @@
+.nav-bar {
+  .toggle-btn-menu {
+    display: none;
+  }
+
+  .nav-links {
+
+  }
+
+  @media screen and (max-width: 768px) {
+    .toggle-btn-menu {
+      display: block;
+    }
+
+    .nav-links {
+      display: none;
+    }
+  }
+}
