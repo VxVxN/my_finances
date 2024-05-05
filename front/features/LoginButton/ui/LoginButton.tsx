@@ -6,7 +6,7 @@ import './styles.scss';
 
 export const LoginButton: FC = () => {
     return (
-        <Button className="login-btn" startContent={<FaKey/>} color="primary" href="#">
+        <Button size='sm' className="login-btn" startContent={<FaKey/>} color="primary" href="#">
             <div className="title">
                 Войти
             </div>
