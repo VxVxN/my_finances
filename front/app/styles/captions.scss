@@ -1,0 +1,14 @@
+$unit: var(--unit);
+
+@for $i from 1 through 6 {
+	$size: calc(calc(7 - $i) * 0.5rem);
+
+	h#{$i} {
+		font-size: $size;
+		font-weight: var(--bold);
+		color: var(--text-primary);
+		line-height: calc($size * 1.125);
+		margin: 0;
+		padding: $size 0;
+	}
+}
