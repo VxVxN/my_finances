@@ -1,4 +1,4 @@
-FROM golang:1.22
+FROM golang:alpine3.19
 
 EXPOSE 8080
 
