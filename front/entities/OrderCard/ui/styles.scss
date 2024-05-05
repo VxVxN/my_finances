@@ -1,0 +1,49 @@
+.order-card {
+  min-width: 240px;
+  width: 100%;
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .title.buy {
+      color: var(--danger);
+    }
+
+    .title.sell {
+      color: var(--succsess);
+    }
+
+    .date {
+      font-size: 0.65rem;
+      color: #999;
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-top: 0;
+
+    .amount {
+      gap: .5rem;
+      display: flex;
+      align-items: center;
+
+      .price {
+        font-size: 1.125rem;
+      }
+
+      .value {
+        font-size: 1.125rem;
+      }
+    }
+  }
+}
