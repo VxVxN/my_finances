@@ -1,19 +1,22 @@
 .order-list {
+  gap: .5rem;
+  display: flex;
+  flex-direction: column;
 
-  @apply grid grid-cols-1 gap-4;
-
-  @screen sm {
-    @apply grid-cols-2;
-  }
-
-  @screen md {
-    @apply grid-cols-2;
-  }
-  @screen lg {
-    @apply grid-cols-3;
-  }
-
-  @screen xl {
-    @apply grid-cols-4;
-  }
+  //@apply grid grid-cols-1 gap-4;
+  //
+  //@screen sm {
+  //  @apply grid-cols-2;
+  //}
+  //
+  //@screen md {
+  //  @apply grid-cols-2;
+  //}
+  //@screen lg {
+  //  @apply grid-cols-3;
+  //}
+  //
+  //@screen xl {
+  //  @apply grid-cols-4;
+  //}
 }
