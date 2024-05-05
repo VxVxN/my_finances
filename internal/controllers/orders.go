@@ -16,6 +16,10 @@ type Order struct {
 	Price         float64   `json:"price"`
 }
 
+// type ResponseBody struct {
+// 	result: []Order `json:"result"`
+// }
+
 func (ctrl *Controller) Orders(w http.ResponseWriter, r *http.Request) {
 	httptools.SuccessResponse(w, []Order{
 		{
