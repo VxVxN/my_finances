@@ -14,7 +14,7 @@ const validationSchema = Yup.object().shape({
 	login: Yup.string().required('Логин обязателен'),
 	password: Yup.string().required('Пароль обязателен'),
 	repeatPassword: Yup.string().oneOf(
-		[Yup.ref('password'), null],
+		[Yup.ref('password')],
 		'Пароли должны совпадать'
 	),
 })

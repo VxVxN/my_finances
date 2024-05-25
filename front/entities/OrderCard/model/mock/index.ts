@@ -1,11 +1,11 @@
-import {Order} from '@/entities/OrderCard';
+import {Order, OrderType} from '@/entities/OrderCard';
 
 export const mockOrders: Order[] =
     [
         {
             "id": 1,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "WETH",
             "value": 95,
             quoteCurrency: "USD",
@@ -13,8 +13,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 2,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "TON",
             "value": 52,
             quoteCurrency: "USD",
@@ -22,8 +22,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 3,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "ETH",
             "value": 94,
             quoteCurrency: "USD",
@@ -31,8 +31,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 4,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "WETH",
             "value": 47,
             quoteCurrency: "USD",
@@ -40,8 +40,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 5,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "WETH",
             "value": 83,
             quoteCurrency: "USD",
@@ -49,8 +49,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 6,
-            "type": "sell",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.SELL,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "TON",
             "value": 63,
             quoteCurrency: "USD",
@@ -58,8 +58,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 7,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "WETH",
             "value": 82,
             quoteCurrency: "USD",
@@ -67,8 +67,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 8,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "NANO",
             "value": 70,
             quoteCurrency: "USD",
@@ -76,8 +76,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 9,
-            "type": "sell",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "WETH",
             "value": 45,
             quoteCurrency: "USD",
@@ -85,8 +85,8 @@ export const mockOrders: Order[] =
         },
         {
             "id": 10,
-            "type": "buy",
-            "datetime": "2024-05-05T08:30:18.295953552Z",
+            "type": OrderType.BUY,
+            "datetime": new Date("2024-05-05T08:30:18.295953552Z"),
             baseCurrency: "XER",
             "value": 36,
             quoteCurrency: "USD",
