@@ -1,9 +1,9 @@
 # FROM node:18-alpine AS deps
-# RUN apk add --no-cache libc6-compat
 # WORKDIR /web-app
 
 # COPY package.json yarn.lock ./
-# RUN yarn install --frozen-lockfile
+# # RUN npm install -g yarn
+# RUN npm install --frozen-lockfile
 
 # FROM node:18-alpine AS builder
 # WORKDIR /web-app
