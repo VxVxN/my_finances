@@ -6,7 +6,12 @@ import (
 )
 
 func main() {
-	server := financeserver.Init()
+	server, err := financeserver.Init()
+	if err != nil {
+		log.Fatalf("Error initializing server: %v", err)
+	}
+	defer server.Stop()
+	server.Handle("GET /", server.Controller.Index)
 	server.Handle("POST /order/create", server.Controller.CreateOrder)
 	server.Handle("POST /order/remove", server.Controller.RemoveOrder)
 	server.Handle("GET /orders", server.Controller.Orders)
