@@ -1,16 +1,18 @@
 version: '3.8'
 services:
-#  web:
-#    build:
-#      context: ./
-#      target: runner
-#    volumes:
-#      - .:/app
-#    command: npm run dev
-#    ports:
-#      - "3000:3000"
-#    environment:
-#      NODE_ENV: development
+  web:
+    container_name: 'web'
+    build:
+      context: ./front
+      target: runner
+    volumes:
+      - .:/app
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+
   backend:
     container_name: 'mdserver'
     build: .
@@ -18,6 +20,7 @@ services:
       - "8080:8080"
     depends_on:
       - mongodb
+
   mongodb:
     container_name: 'mongo'
     image: mongo:latest
