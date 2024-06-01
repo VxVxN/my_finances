@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/VxVxN/my_finances/internal/controllers"
+	"github.com/VxVxN/my_finances/internal/controllers/order"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -12,8 +13,9 @@ import (
 )
 
 type Server struct {
-	Controller *controllers.Controller
-	client     *mongo.Client
+	OrderController  *order.Controller
+	CommonController *controllers.Controller
+	client           *mongo.Client
 }
 
 func Init() (*Server, error) {
@@ -30,8 +32,9 @@ func Init() (*Server, error) {
 	}
 
 	return &Server{
-		Controller: controllers.Init(client),
-		client:     client,
+		OrderController:  order.Init(client),
+		CommonController: controllers.Init(client),
+		client:           client,
 	}, nil
 }
 
