@@ -12,14 +12,11 @@ type Config struct {
 }
 
 func Init(configPath string) (*Config, error) {
-	var file []byte
-	var err error
-	if file, err = os.ReadFile(configPath); err != nil {
-		return nil, err
-	}
 	var cfg Config
-	if err = yaml.Unmarshal(file, &cfg); err != nil {
-		return nil, err
+	if file, err := os.ReadFile(configPath); err == nil {
+		if err = yaml.Unmarshal(file, &cfg); err != nil {
+			return nil, err
+		}
 	}
 	if cfg.Port == 0 {
 		cfg.Port = 8080
