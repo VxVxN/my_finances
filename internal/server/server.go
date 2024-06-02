@@ -44,10 +44,6 @@ func (server *Server) Stop() {
 	}
 }
 
-func (server *Server) ListenAndServe() error {
-	return http.ListenAndServe(":8080", nil) // todo address move to config
-}
-
-func (server *Server) Handle(route string, handler func(http.ResponseWriter, *http.Request)) {
-	http.HandleFunc(route, handler)
+func (server *Server) ListenAndServe(handler http.Handler) error {
+	return http.ListenAndServe(":8080", handler) // todo address move to config
 }

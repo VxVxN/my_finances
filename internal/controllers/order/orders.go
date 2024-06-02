@@ -32,10 +32,6 @@ func NewOrder(orderType string, dateTime time.Time, baseCurrency string, value f
 	}
 }
 
-// type ResponseBody struct {
-// 	result: []Order `json:"result"`
-// }
-
 func (ctrl *Controller) Orders(w http.ResponseWriter, r *http.Request) {
 	cur, err := ctrl.orderCollection.Find(context.Background(), bson.D{})
 	if err != nil {
