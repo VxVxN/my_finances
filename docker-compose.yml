@@ -4,10 +4,10 @@ services:
     container_name: 'web'
     build:
       context: ./front
-      target: runner
+      # target: runner
     volumes:
       - .:/app
-    command: npm run dev
+    command: yarn start
     ports:
       - "3000:3000"
     environment:
