@@ -20,6 +20,7 @@ import {LoginButton} from '@/features/LoginButton';
 import {MdCreate} from 'react-icons/md';
 import {CreateOrderForm} from '@/entities/CreateOrderForm';
 import {useDisclosure} from '@nextui-org/modal';
+import { AvatarProfile } from '@/widgets/avatar';
 
 interface NavBarProps {
 
@@ -67,8 +68,8 @@ export const NavBar: FC<NavBarProps> = ({}) => {
                     <NavbarItem>
                         <SwitchTheme/>
                     </NavbarItem>
-                    <NavbarItem>
-                        <LoginButton/>
+                    <NavbarItem>                        
+                        <AvatarProfile/>
                     </NavbarItem>
                 </NavbarContent>
 
