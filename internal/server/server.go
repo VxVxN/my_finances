@@ -23,9 +23,14 @@ type Server struct {
 }
 
 func Init() (*Server, error) {
+	cfg, err := config.Init("config.yaml")
+	if err != nil {
+		return nil, fmt.Errorf("can't init config: %v", err)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://mongo:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.MongoUrl))
 	if err != nil {
 		return nil, fmt.Errorf("can't connect to mongodb: %v", err)
 	}
@@ -36,14 +41,14 @@ func Init() (*Server, error) {
 		return nil, fmt.Errorf("can't ping to mongodb, %w", err)
 	}
 
-	cfg, err := config.Init("config.yaml")
+	commonController, err := controllers.Init(client)
 	if err != nil {
-		return nil, fmt.Errorf("can't init config: %v", err)
+		return nil, fmt.Errorf("can't init common controller: %v", err)
 	}
 
 	return &Server{
 		OrderController:  order.Init(client),
-		CommonController: controllers.Init(client),
+		CommonController: commonController,
 		client:           client,
 		cfg:              cfg,
 	}, nil

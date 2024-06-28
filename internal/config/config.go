@@ -7,8 +7,9 @@ import (
 
 // Config structure for reading the configuration file.
 type Config struct {
-	Port        int  `yaml:"port"`
-	DisableAuth bool `yaml:"disable_auth"`
+	Port        int    `yaml:"port"`
+	DisableAuth bool   `yaml:"disable_auth"`
+	MongoUrl    string `yaml:"mongo_url"`
 }
 
 func Init(configPath string) (*Config, error) {
@@ -20,6 +21,9 @@ func Init(configPath string) (*Config, error) {
 	}
 	if cfg.Port == 0 {
 		cfg.Port = 8080
+	}
+	if cfg.MongoUrl == "" {
+		cfg.MongoUrl = "mongodb://localhost:27017"
 	}
 	return &cfg, nil
 }
