@@ -17,6 +17,7 @@ func main() {
 	router.HandleFunc("GET /", server.CommonController.Index)
 	router.HandleFunc("POST /register", server.CommonController.Register)
 	router.HandleFunc("POST /login", server.CommonController.Login)
+	router.HandleFunc("POST /refresh-token", server.CommonController.RefreshToken)
 
 	router.HandleFunc("POST /order/create", server.AuthMiddleware(server.OrderController.CreateOrder))
 	router.HandleFunc("POST /order/remove", server.AuthMiddleware(server.OrderController.RemoveOrder))

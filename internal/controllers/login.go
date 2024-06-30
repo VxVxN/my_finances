@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"strings"
 	"time"
@@ -18,7 +19,14 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken string `json:"access_token"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type refreshTokens struct {
+	Username string    `bson:"username"`
+	Token    string    `bson:"token"`
+	ExpireAt time.Time `bson:"expire_at"`
 }
 
 var JwtSecretKey = []byte(uuid.NewString())
@@ -46,7 +54,8 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 24).Unix(), // todo move to config
+		"exp":      time.Now().Add(time.Hour * 24).Unix(), // todo move to config
+		"username": req.Username,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
@@ -54,7 +63,15 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := token.SignedString(JwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign token: %v", err))
+		return
+	}
+	refreshToken := uuid.NewString()
+	upsert := true
+	_, err = ctrl.refreshTokensCollection.ReplaceOne(context.Background(), bson.D{{"username", req.Username}}, refreshTokens{Username: req.Username, Token: refreshToken, ExpireAt: time.Now().Add(time.Hour * 24 * 7)}, &options.ReplaceOptions{Upsert: &upsert})
+	if err != nil {
+		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert refresh token: %v", err))
+		return
 	}
 
-	httptools.SuccessResponse(w, LoginResponse{AccessToken: accessToken})
+	httptools.SuccessResponse(w, LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken})
 }

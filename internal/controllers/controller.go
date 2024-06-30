@@ -8,11 +8,13 @@ import (
 )
 
 type Controller struct {
-	authCollection *mongo.Collection
+	authCollection          *mongo.Collection
+	refreshTokensCollection *mongo.Collection
 }
 
 func Init(client *mongo.Client) (*Controller, error) {
 	authCollection := client.Database("myFinances").Collection("auth")
+	refreshTokensCollection := client.Database("myFinances").Collection("refresh_tokens")
 
 	ctx := context.Background()
 
@@ -25,5 +27,5 @@ func Init(client *mongo.Client) (*Controller, error) {
 		return nil, err
 	}
 
-	return &Controller{authCollection: authCollection}, nil
+	return &Controller{authCollection: authCollection, refreshTokensCollection: refreshTokensCollection}, nil
 }
