@@ -8,11 +8,12 @@ import (
 )
 
 type Controller struct {
+	jwtSecretKey            []byte
 	authCollection          *mongo.Collection
 	refreshTokensCollection *mongo.Collection
 }
 
-func Init(client *mongo.Client) (*Controller, error) {
+func Init(client *mongo.Client, jwtSecretKey []byte) (*Controller, error) {
 	authCollection := client.Database("myFinances").Collection("auth")
 	refreshTokensCollection := client.Database("myFinances").Collection("refresh_tokens")
 
@@ -27,5 +28,9 @@ func Init(client *mongo.Client) (*Controller, error) {
 		return nil, err
 	}
 
-	return &Controller{authCollection: authCollection, refreshTokensCollection: refreshTokensCollection}, nil
+	return &Controller{
+		jwtSecretKey:            jwtSecretKey,
+		authCollection:          authCollection,
+		refreshTokensCollection: refreshTokensCollection,
+	}, nil
 }

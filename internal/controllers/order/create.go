@@ -4,17 +4,31 @@ import (
 	"context"
 	"fmt"
 	"github.com/VxVxN/my_finances/pkg/httptools"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 )
 
 type CreateOrderRequest struct {
-	Type          string    `json:"type"`
-	Datetime      time.Time `json:"datetime"`
-	BaseCurrency  string    `json:"base_currency"`
-	Value         float64   `json:"value"`
-	QuoteCurrency string    `json:"quote_currency"`
-	Price         float64   `json:"price"`
+	Type     OrderType `json:"type"`
+	Datetime time.Time `json:"datetime"`
+	Currency string    `json:"currency"`
+	Amount   float64   `json:"amount"`
+	Price    float64   `json:"price"`
+}
+
+type OrderType string
+
+const (
+	Buy  OrderType = "buy"
+	Sell           = "sell"
+)
+
+type Balance struct {
+	Username string `bson:"username"`
+	Currency string `bson:"currency"`
+	Balance  int    `bson:"balance"`
 }
 
 func (ctrl *Controller) CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -24,11 +38,41 @@ func (ctrl *Controller) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusBadRequest, err)
 		return
 	}
-	newOrder := NewOrder(req.Type, req.Datetime, req.BaseCurrency, req.Value, req.QuoteCurrency, req.Price)
+	newOrder := NewOrder(req.Type, req.Datetime, req.Currency, req.Amount, req.Price)
 	_, err := ctrl.orderCollection.InsertOne(context.Background(), newOrder)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert order: %v", err))
 		return
 	}
+
+	if err = ctrl.UpdateBalance(r, &req); err != nil {
+		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't update balance: %v", err))
+		return
+	}
+
 	httptools.SuccessResponse(w, nil)
+}
+
+func (ctrl *Controller) UpdateBalance(r *http.Request, req *CreateOrderRequest) error {
+	username, err := httptools.GetValueFromJwtToken(r, ctrl.jwtSecretKey, "username")
+	if err != nil {
+		return fmt.Errorf("can't get username: %v", err)
+	}
+
+	ctx := context.Background()
+	filter := bson.M{"username": username, "currency": req.Currency}
+	amount := req.Amount
+	if req.Type == Sell {
+		amount = -amount
+	}
+	update := bson.M{
+		"$inc": bson.M{"balance": amount},
+	}
+	opts := options.Update().SetUpsert(true)
+
+	if _, err = ctrl.balanceCollection.UpdateOne(ctx, filter, update, opts); err != nil {
+		return err
+	}
+
+	return nil
 }

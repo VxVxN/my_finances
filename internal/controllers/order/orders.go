@@ -11,24 +11,22 @@ import (
 )
 
 type Order struct {
-	Id            primitive.ObjectID `bson:"_id" json:"id"`
-	Type          string             `bson:"type" json:"type"`
-	Datetime      time.Time          `bson:"datetime" json:"datetime"`
-	BaseCurrency  string             `bson:"base_currency" json:"base_currency"`
-	Value         float64            `bson:"value" json:"value"`
-	QuoteCurrency string             `bson:"quote_currency" json:"quote_currency"`
-	Price         float64            `bson:"price" json:"price"`
+	Id       primitive.ObjectID `bson:"_id" json:"id"`
+	Type     OrderType          `bson:"type" json:"type"`
+	Datetime time.Time          `bson:"datetime" json:"datetime"`
+	Currency string             `bson:"currency" json:"currency"`
+	Amount   float64            `bson:"amount" json:"amount"`
+	Price    float64            `bson:"price" json:"price"`
 }
 
-func NewOrder(orderType string, dateTime time.Time, baseCurrency string, value float64, quoteCurrency string, price float64) *Order {
+func NewOrder(orderType OrderType, dateTime time.Time, currency string, amount float64, price float64) *Order {
 	return &Order{
-		Id:            primitive.NewObjectID(),
-		Type:          orderType,
-		Datetime:      dateTime,
-		BaseCurrency:  baseCurrency,
-		Value:         value,
-		QuoteCurrency: quoteCurrency,
-		Price:         price,
+		Id:       primitive.NewObjectID(),
+		Type:     orderType,
+		Datetime: dateTime,
+		Currency: currency,
+		Amount:   amount,
+		Price:    price,
 	}
 }
 

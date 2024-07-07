@@ -29,8 +29,6 @@ type refreshTokens struct {
 	ExpireAt time.Time `bson:"expire_at"`
 }
 
-var JwtSecretKey = []byte(uuid.NewString())
-
 func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 
@@ -60,7 +58,7 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	accessToken, err := token.SignedString(JwtSecretKey)
+	accessToken, err := token.SignedString(ctrl.jwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign token: %v", err))
 		return

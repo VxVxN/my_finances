@@ -22,6 +22,7 @@ func main() {
 	router.HandleFunc("POST /order/create", server.AuthMiddleware(server.OrderController.CreateOrder))
 	router.HandleFunc("POST /order/remove", server.AuthMiddleware(server.OrderController.RemoveOrder))
 	router.HandleFunc("GET /orders", server.AuthMiddleware(server.OrderController.Orders))
+	router.HandleFunc("GET /balance", server.AuthMiddleware(server.OrderController.Balance))
 
 	if err := server.ListenAndServe(router); err != nil {
 		log.Fatalf("Cannot listen server: %v", err)

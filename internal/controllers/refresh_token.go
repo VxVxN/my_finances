@@ -24,29 +24,9 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accessToken, err := r.Cookie("access_token")
+	username, err := httptools.GetValueFromJwtToken(r, ctrl.jwtSecretKey, "username")
 	if err != nil {
-		httptools.ErrResponse(w, http.StatusBadRequest, fmt.Errorf("cannot get access token: %v", err))
-		return
-	}
-	token, err := jwt.Parse(accessToken.Value, func(token *jwt.Token) (interface{}, error) {
-		return JwtSecretKey, nil
-	})
-
-	//if err != nil {
-	//	httptools.ErrResponse(w, http.StatusUnauthorized, fmt.Errorf("failed to parse access token: %v", err))
-	//	return
-	//}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		httptools.ErrResponse(w, http.StatusInternalServerError, errors.New("unable to retrieve claims from JWT token"))
-		return
-	}
-
-	username, ok := claims["username"].(string)
-	if !ok {
-		httptools.ErrResponse(w, http.StatusInternalServerError, errors.New("unable to retrieve username from JWT token"))
+		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't get username: %v", err))
 		return
 	}
 
@@ -71,7 +51,7 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	newAccessToken, err := newToken.SignedString(JwtSecretKey)
+	newAccessToken, err := newToken.SignedString(ctrl.jwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign token: %v", err))
 		return

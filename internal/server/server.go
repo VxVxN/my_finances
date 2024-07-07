@@ -8,6 +8,7 @@ import (
 	"github.com/VxVxN/my_finances/internal/controllers/order"
 	"github.com/VxVxN/my_finances/pkg/httptools"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -16,6 +17,7 @@ import (
 )
 
 type Server struct {
+	jwtSecretKey     []byte
 	OrderController  *order.Controller
 	CommonController *controllers.Controller
 	client           *mongo.Client
@@ -41,13 +43,16 @@ func Init() (*Server, error) {
 		return nil, fmt.Errorf("can't ping to mongodb, %w", err)
 	}
 
-	commonController, err := controllers.Init(client)
+	jwtSecretKey := []byte(uuid.NewString())
+
+	commonController, err := controllers.Init(client, jwtSecretKey)
 	if err != nil {
 		return nil, fmt.Errorf("can't init common controller: %v", err)
 	}
 
 	return &Server{
-		OrderController:  order.Init(client),
+		jwtSecretKey:     jwtSecretKey,
+		OrderController:  order.Init(client, jwtSecretKey),
 		CommonController: commonController,
 		client:           client,
 		cfg:              cfg,
@@ -73,7 +78,7 @@ func (server *Server) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 			token, err := jwt.Parse(accessToken.Value, func(token *jwt.Token) (interface{}, error) {
-				return controllers.JwtSecretKey, nil
+				return server.jwtSecretKey, nil
 			})
 
 			if err != nil {
