@@ -23,7 +23,7 @@ func Init(configPath string) (*Config, error) {
 		cfg.Port = 8080
 	}
 	if cfg.MongoUrl == "" {
-		cfg.MongoUrl = "mongodb://localhost:27017"
+		cfg.MongoUrl = "mongodb://mongo:27017"
 	}
 	return &cfg, nil
 }
