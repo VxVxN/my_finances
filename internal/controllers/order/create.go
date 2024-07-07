@@ -26,9 +26,9 @@ const (
 )
 
 type Balance struct {
-	Username string `bson:"username"`
-	Currency string `bson:"currency"`
-	Balance  int    `bson:"balance"`
+	Username string  `bson:"username" json:"username"`
+	Currency string  `bson:"currency" json:"currency"`
+	Balance  float64 `bson:"balance" json:"balance"`
 }
 
 func (ctrl *Controller) CreateOrder(w http.ResponseWriter, r *http.Request) {
