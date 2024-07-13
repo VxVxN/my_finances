@@ -12,6 +12,7 @@ import (
 
 	"github.com/VxVxN/my_finances/internal/config"
 	"github.com/VxVxN/my_finances/internal/controllers"
+	"github.com/VxVxN/my_finances/internal/controllers/chart"
 	"github.com/VxVxN/my_finances/internal/controllers/order"
 	"github.com/VxVxN/my_finances/pkg/httptools"
 	"github.com/golang-jwt/jwt"
@@ -22,6 +23,7 @@ type Server struct {
 	jwtSecretKey     []byte
 	OrderController  *order.Controller
 	CommonController *controllers.Controller
+	ChartController  *chart.Controller
 	client           *mongo.Client
 	cfg              *config.Config
 }
@@ -56,6 +58,7 @@ func Init() (*Server, error) {
 		jwtSecretKey:     jwtSecretKey,
 		OrderController:  order.Init(client, jwtSecretKey),
 		CommonController: commonController,
+		ChartController:  chart.Init(client, jwtSecretKey),
 		client:           client,
 		cfg:              cfg,
 	}, nil

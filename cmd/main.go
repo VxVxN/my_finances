@@ -1,9 +1,10 @@
 package main
 
 import (
-	financeserver "github.com/VxVxN/my_finances/internal/server"
 	"log"
 	"net/http"
+
+	financeserver "github.com/VxVxN/my_finances/internal/server"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	router.HandleFunc("GET /orders", server.AuthMiddleware(server.OrderController.Orders))
 	router.HandleFunc("GET /balance", server.AuthMiddleware(server.OrderController.Balance))
 
-	//router.HandleFunc("POST /chart/profit", server.AuthMiddleware(server.ChartController.Profit))
+	router.HandleFunc("POST /chart/historical-balance", server.AuthMiddleware(server.ChartController.HistoricalBalance))
 
 	if err := server.ListenAndServe(router); err != nil {
 		log.Fatalf("Cannot listen server: %v", err)
