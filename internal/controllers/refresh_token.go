@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/VxVxN/my_finances/pkg/httptools"
-	"github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/VxVxN/my_finances/pkg/httptools"
+	"github.com/golang-jwt/jwt"
 )
 
 type RefreshTokenRequest struct {
@@ -24,9 +25,19 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := httptools.GetValueFromJwtToken(r, ctrl.jwtSecretKey, "username")
-	if err != nil {
-		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't get username: %v", err))
+	token, _ := jwt.Parse(req.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		return ctrl.jwtSecretKey, nil
+	})
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		httptools.ErrResponse(w, http.StatusInternalServerError, errors.New("unable to retrieve claims from JWT token"))
+		return
+	}
+
+	username, ok := claims["username"].(string)
+	if !ok {
+		httptools.ErrResponse(w, http.StatusInternalServerError, errors.New("unable to retrieve username from JWT token"))
 		return
 	}
 
@@ -36,7 +47,7 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var refreshTokensFromDb refreshTokens
-	if err = result.Decode(&refreshTokensFromDb); err != nil {
+	if err := result.Decode(&refreshTokensFromDb); err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't decode refresh token: %v", err))
 		return
 	}
@@ -45,7 +56,7 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload := jwt.MapClaims{
-		"exp":      time.Now().Add(time.Hour * 24).Unix(), // todo move to config
+		"exp":      time.Now().Add(time.Hour * time.Duration(ctrl.config.AccessTokenExpiredHours)).Unix(),
 		"username": username,
 	}
 
@@ -56,7 +67,15 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign token: %v", err))
 		return
 	}
-	newRefreshToken := uuid.NewString()
+	payload = jwt.MapClaims{
+		"exp":      time.Now().Add(time.Hour * time.Duration(ctrl.config.RefreshTokenExpiredHours)).Unix(),
+		"username": username,
+	}
+	newRefreshToken, err := ctrl.signedJwtToken(payload)
+	if err != nil {
+		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign refresh token: %v", err))
+		return
+	}
 	upsert := true
 	_, err = ctrl.refreshTokensCollection.ReplaceOne(context.Background(), bson.D{{"username", username}}, refreshTokens{Username: username, Token: newRefreshToken, ExpireAt: time.Now().Add(time.Hour * 24 * 7)}, &options.ReplaceOptions{Upsert: &upsert})
 	if err != nil {

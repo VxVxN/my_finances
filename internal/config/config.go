@@ -1,15 +1,18 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Config structure for reading the configuration file.
 type Config struct {
-	Port        int    `yaml:"port"`
-	DisableAuth bool   `yaml:"disable_auth"`
-	MongoUrl    string `yaml:"mongo_url"`
+	Port                     int    `yaml:"port"`
+	DisableAuth              bool   `yaml:"disable_auth"`
+	MongoUrl                 string `yaml:"mongo_url"`
+	AccessTokenExpiredHours  int    `yaml:"access_token_expired_hours"`
+	RefreshTokenExpiredHours int    `yaml:"refresh_token_expired_hours"`
 }
 
 func Init(configPath string) (*Config, error) {
@@ -24,6 +27,12 @@ func Init(configPath string) (*Config, error) {
 	}
 	if cfg.MongoUrl == "" {
 		cfg.MongoUrl = "mongodb://mongo:27017"
+	}
+	if cfg.AccessTokenExpiredHours == 0 {
+		cfg.AccessTokenExpiredHours = 24
+	}
+	if cfg.RefreshTokenExpiredHours == 0 {
+		cfg.RefreshTokenExpiredHours = 24 * 7
 	}
 	return &cfg, nil
 }

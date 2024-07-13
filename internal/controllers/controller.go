@@ -2,18 +2,22 @@ package controllers
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/VxVxN/my_finances/internal/config"
 )
 
 type Controller struct {
+	config                  *config.Config
 	jwtSecretKey            []byte
 	authCollection          *mongo.Collection
 	refreshTokensCollection *mongo.Collection
 }
 
-func Init(client *mongo.Client, jwtSecretKey []byte) (*Controller, error) {
+func Init(client *mongo.Client, jwtSecretKey []byte, cfg *config.Config) (*Controller, error) {
 	authCollection := client.Database("myFinances").Collection("auth")
 	refreshTokensCollection := client.Database("myFinances").Collection("refresh_tokens")
 
@@ -29,6 +33,7 @@ func Init(client *mongo.Client, jwtSecretKey []byte) (*Controller, error) {
 	}
 
 	return &Controller{
+		config:                  cfg,
 		jwtSecretKey:            jwtSecretKey,
 		authCollection:          authCollection,
 		refreshTokensCollection: refreshTokensCollection,

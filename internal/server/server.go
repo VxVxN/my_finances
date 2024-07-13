@@ -3,17 +3,19 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+
 	"github.com/VxVxN/my_finances/internal/config"
 	"github.com/VxVxN/my_finances/internal/controllers"
 	"github.com/VxVxN/my_finances/internal/controllers/order"
 	"github.com/VxVxN/my_finances/pkg/httptools"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"net/http"
-	"time"
 )
 
 type Server struct {
@@ -45,7 +47,7 @@ func Init() (*Server, error) {
 
 	jwtSecretKey := []byte(uuid.NewString())
 
-	commonController, err := controllers.Init(client, jwtSecretKey)
+	commonController, err := controllers.Init(client, jwtSecretKey, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("can't init common controller: %v", err)
 	}
