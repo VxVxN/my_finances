@@ -14,7 +14,8 @@ services:
       NODE_ENV: development
 
   backend:
-    container_name: 'mdserver'
+    container_name: 'backend'
+    restart: always
     build: .
     ports:
       - "8080:8080"
@@ -24,6 +25,7 @@ services:
   mongodb:
     container_name: 'mongo'
     image: mongo:latest
+    user: "1001:1001"  # Specify the UID:GID here
     restart: always
     ports:
       - "27017:27017"
