@@ -52,7 +52,7 @@ func (ctrl *Controller) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httptools.SuccessResponse(w, nil)
+	httptools.SuccessResponse(w, r, nil)
 }
 
 func (ctrl *Controller) UpdateBalance(r *http.Request, req *CreateOrderRequest) error {

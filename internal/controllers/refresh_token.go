@@ -83,5 +83,5 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httptools.SuccessResponse(w, LoginResponse{AccessToken: newAccessToken, RefreshToken: newRefreshToken})
+	httptools.SuccessResponse(w, r, LoginResponse{AccessToken: newAccessToken, RefreshToken: newRefreshToken})
 }

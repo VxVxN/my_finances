@@ -3,9 +3,10 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"github.com/VxVxN/my_finances/pkg/httptools"
 	"net/http"
 	"strings"
+
+	"github.com/VxVxN/my_finances/pkg/httptools"
 )
 
 type RegisterRequest struct {
@@ -34,5 +35,5 @@ func (ctrl *Controller) Register(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert register data: %v", err))
 		return
 	}
-	httptools.SuccessResponse(w, nil)
+	httptools.SuccessResponse(w, r, nil)
 }

@@ -19,7 +19,10 @@ func ErrResponse(w http.ResponseWriter, status int, err error) {
 	w.Write(data)
 }
 
-func SuccessResponse(w http.ResponseWriter, resp interface{}) {
+func SuccessResponse(w http.ResponseWriter, req *http.Request, resp interface{}) {
+	req.Header.Set("Access-Control-Allow-Methods", "GET, POST")
+	//req.Header.Set("Access-Control-Allow-Headers", "")
+	req.Header.Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.WriteHeader(http.StatusOK)
 	if resp == nil {
 		return
