@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	financeserver "github.com/VxVxN/my_finances/internal/server"
+	"github.com/VxVxN/my_finances/pkg/httptools"
 )
 
 func main() {
@@ -14,18 +15,23 @@ func main() {
 	}
 	defer server.Stop()
 
+	commonMiddleware := []httptools.Middleware{
+		server.AuthMiddleware,
+		server.LogsMiddleware,
+	}
+
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", server.CommonController.Index)
-	router.HandleFunc("POST /register", server.CommonController.Register)
-	router.HandleFunc("POST /login", server.CommonController.Login)
-	router.HandleFunc("POST /refresh-token", server.CommonController.RefreshToken)
+	router.HandleFunc("GET /", server.LogsMiddleware(server.CommonController.Index))
+	router.HandleFunc("POST /register", server.LogsMiddleware(server.CommonController.Register))
+	router.HandleFunc("POST /login", server.LogsMiddleware(server.CommonController.Login))
+	router.HandleFunc("POST /refresh-token", server.LogsMiddleware(server.CommonController.RefreshToken))
 
-	router.HandleFunc("POST /order/create", server.AuthMiddleware(server.OrderController.CreateOrder))
-	router.HandleFunc("POST /order/remove", server.AuthMiddleware(server.OrderController.RemoveOrder))
-	router.HandleFunc("GET /orders", server.AuthMiddleware(server.OrderController.Orders))
-	router.HandleFunc("GET /balance", server.AuthMiddleware(server.OrderController.Balance))
+	router.HandleFunc("POST /order/create", httptools.MultipleMiddleware(server.OrderController.CreateOrder, commonMiddleware...))
+	router.HandleFunc("POST /order/remove", httptools.MultipleMiddleware(server.OrderController.RemoveOrder, commonMiddleware...))
+	router.HandleFunc("GET /orders", httptools.MultipleMiddleware(server.OrderController.Orders, commonMiddleware...))
+	router.HandleFunc("GET /balance", httptools.MultipleMiddleware(server.OrderController.Balance, commonMiddleware...))
 
-	router.HandleFunc("POST /chart/historical-balance", server.AuthMiddleware(server.ChartController.HistoricalBalance))
+	router.HandleFunc("POST /chart/historical-balance", httptools.MultipleMiddleware(server.ChartController.HistoricalBalance, commonMiddleware...))
 
 	if err := server.ListenAndServe(router); err != nil {
 		log.Fatalf("Cannot listen server: %v", err)
