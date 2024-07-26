@@ -1,6 +1,13 @@
+.wrapper-auth {
+    border-radius: 1rem;
+    background-color: #393a3f;
+    padding: 1rem;
+
+}
+
 .auth.layout {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

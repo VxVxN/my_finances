@@ -3,23 +3,28 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+
 	"github.com/VxVxN/my_finances/internal/config"
 	"github.com/VxVxN/my_finances/internal/controllers"
+	"github.com/VxVxN/my_finances/internal/controllers/chart"
 	"github.com/VxVxN/my_finances/internal/controllers/order"
 	"github.com/VxVxN/my_finances/pkg/httptools"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"net/http"
-	"time"
+	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
 	jwtSecretKey     []byte
 	OrderController  *order.Controller
 	CommonController *controllers.Controller
+	ChartController  *chart.Controller
 	client           *mongo.Client
 	cfg              *config.Config
 }
@@ -44,8 +49,11 @@ func Init() (*Server, error) {
 	}
 
 	jwtSecretKey := []byte(uuid.NewString())
+	if cfg.JwtSecretKey != "" {
+		jwtSecretKey = []byte(cfg.JwtSecretKey)
+	}
 
-	commonController, err := controllers.Init(client, jwtSecretKey)
+	commonController, err := controllers.Init(client, jwtSecretKey, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("can't init common controller: %v", err)
 	}
@@ -54,9 +62,14 @@ func Init() (*Server, error) {
 		jwtSecretKey:     jwtSecretKey,
 		OrderController:  order.Init(client, jwtSecretKey),
 		CommonController: commonController,
+		ChartController:  chart.Init(client, jwtSecretKey),
 		client:           client,
 		cfg:              cfg,
 	}, nil
+}
+
+func (server *Server) Start() error {
+	return nil
 }
 
 func (server *Server) Stop() {
@@ -66,6 +79,7 @@ func (server *Server) Stop() {
 }
 
 func (server *Server) ListenAndServe(handler http.Handler) error {
+	log.Info().Int("port", server.cfg.Port).Msg("Server started")
 	return http.ListenAndServe(fmt.Sprintf(":%d", server.cfg.Port), handler)
 }
 
@@ -92,5 +106,28 @@ func (server *Server) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			}
 		}
 		next.ServeHTTP(w, r)
+	}
+}
+
+type ExtendResponseWriter struct {
+	http.ResponseWriter
+	StatusCode int
+}
+
+func NewResponseWriter(w http.ResponseWriter) *ExtendResponseWriter {
+	return &ExtendResponseWriter{w, http.StatusOK}
+}
+
+func (w *ExtendResponseWriter) WriteHeader(code int) {
+	w.StatusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (server *Server) LogsMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		newResponseWriter := NewResponseWriter(w)
+		startTime := time.Now()
+		next.ServeHTTP(newResponseWriter, r)
+		log.Info().Str("path", r.URL.Path).Str("duration", time.Since(startTime).String()).Int("statusCode", newResponseWriter.StatusCode).Msg("Request")
 	}
 }

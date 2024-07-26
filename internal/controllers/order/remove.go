@@ -3,10 +3,12 @@ package order
 import (
 	"context"
 	"fmt"
-	"github.com/VxVxN/my_finances/pkg/httptools"
+	"net/http"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
+
+	"github.com/VxVxN/my_finances/pkg/httptools"
 )
 
 func (ctrl *Controller) RemoveOrder(w http.ResponseWriter, r *http.Request) {
@@ -29,5 +31,5 @@ func (ctrl *Controller) RemoveOrder(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusNotFound, fmt.Errorf("order not found"))
 		return
 	}
-	httptools.SuccessResponse(w, nil)
+	httptools.SuccessResponse(w, r, nil)
 }

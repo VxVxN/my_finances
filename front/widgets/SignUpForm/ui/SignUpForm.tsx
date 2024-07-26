@@ -34,14 +34,13 @@ export const SignUpForm = () => {
         validateOnMount: false,
 		validationSchema, 
 		onSubmit: (values) => {
-			alert(JSON.stringify(values, null, 2))
 
-			// const data = {
-			// 	username: values.username,
-			// 	password: values.password
-			// }
+			const data = {
+				username: values.username,
+				password: values.password
+			}
 
-			// signUp(data)
+			signUp(data)
 		},
 	})
 

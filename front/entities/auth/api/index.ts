@@ -5,8 +5,11 @@ const signUp = (data: SignUpData) => {
     api.post('/register', data)
 }
 
-const signIn = (data: SignInData) => {
-    api.post('/login', data)
+const signIn = async (data: SignInData) => {
+    api.post('/login', data).then(response => {
+        console.log(response)   
+    })
+
 }
 
 export { signUp, signIn }

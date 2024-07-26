@@ -3,10 +3,12 @@ package order
 import (
 	"context"
 	"fmt"
+	"net/http"
+
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/VxVxN/my_finances/pkg/httptools"
 	"github.com/VxVxN/my_finances/pkg/tools"
-	"go.mongodb.org/mongo-driver/bson"
-	"net/http"
 )
 
 var tokens = []string{
@@ -65,5 +67,5 @@ func (ctrl *Controller) Balance(w http.ResponseWriter, r *http.Request) {
 			BalanceUsd: balance.Balance * price})
 		commonBalance += balance.Balance * price
 	}
-	httptools.SuccessResponse(w, ResponseBalance{Balance: commonBalance, Tokens: tokenBalance})
+	httptools.SuccessResponse(w, r, ResponseBalance{Balance: commonBalance, Tokens: tokenBalance})
 }
