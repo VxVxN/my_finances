@@ -30,6 +30,12 @@ type refreshTokens struct {
 	ExpireAt time.Time `bson:"expire_at"`
 }
 
+type AccessToken struct {
+	Username string    `bson:"username"`
+	Token    string    `bson:"token"`
+	ExpireAt time.Time `bson:"expire_at"`
+}
+
 func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 
@@ -52,28 +58,30 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	accessTokenExpireAt := time.Now().Add(time.Hour * time.Duration(ctrl.config.AccessTokenExpiredHours))
 	payload := jwt.MapClaims{
-		"exp":      time.Now().Add(time.Hour * time.Duration(ctrl.config.AccessTokenExpiredHours)).Unix(),
+		"exp":      accessTokenExpireAt.Unix(),
 		"username": req.Username,
 	}
 
-	accessToken, err := ctrl.signedJwtToken(payload)
+	accessToken, err := ctrl.SignedJwtToken(payload, ctrl.jwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign access token: %v", err))
 		return
 	}
 
+	refreshTokenExpireAt := time.Now().Add(time.Hour * time.Duration(ctrl.config.RefreshTokenExpiredHours))
 	payload = jwt.MapClaims{
-		"exp":      time.Now().Add(time.Hour * time.Duration(ctrl.config.RefreshTokenExpiredHours)).Unix(),
+		"exp":      refreshTokenExpireAt.Unix(),
 		"username": req.Username,
 	}
-	refreshToken, err := ctrl.signedJwtToken(payload)
+	refreshToken, err := ctrl.SignedJwtToken(payload, ctrl.jwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign refresh token: %v", err))
 		return
 	}
 	upsert := true
-	_, err = ctrl.refreshTokensCollection.ReplaceOne(context.Background(), bson.D{{"username", req.Username}}, refreshTokens{Username: req.Username, Token: refreshToken, ExpireAt: time.Now().Add(time.Hour * 24 * 7)}, &options.ReplaceOptions{Upsert: &upsert})
+	_, err = ctrl.refreshTokensCollection.ReplaceOne(context.Background(), bson.D{{"username", req.Username}}, refreshTokens{Username: req.Username, Token: refreshToken, ExpireAt: refreshTokenExpireAt}, &options.ReplaceOptions{Upsert: &upsert})
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert refresh token: %v", err))
 		return
@@ -82,10 +90,10 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	httptools.SuccessResponse(w, r, LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken})
 }
 
-func (ctrl *Controller) signedJwtToken(payload jwt.MapClaims) (string, error) {
+func (ctrl *Controller) SignedJwtToken(payload jwt.MapClaims, jwtSecretKey []byte) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	accessToken, err := token.SignedString(ctrl.jwtSecretKey)
+	accessToken, err := token.SignedString(jwtSecretKey)
 	if err != nil {
 		return "", err
 	}

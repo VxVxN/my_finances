@@ -13,6 +13,7 @@ type Config struct {
 	MongoUrl                 string `yaml:"mongo_url"`
 	AccessTokenExpiredHours  int    `yaml:"access_token_expired_hours"`
 	RefreshTokenExpiredHours int    `yaml:"refresh_token_expired_hours"`
+	JwtSecretKey             string `yaml:"jwt_secret_key"`
 }
 
 func Init(configPath string) (*Config, error) {

@@ -71,7 +71,7 @@ func (ctrl *Controller) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		"exp":      time.Now().Add(time.Hour * time.Duration(ctrl.config.RefreshTokenExpiredHours)).Unix(),
 		"username": username,
 	}
-	newRefreshToken, err := ctrl.signedJwtToken(payload)
+	newRefreshToken, err := ctrl.SignedJwtToken(payload, ctrl.jwtSecretKey)
 	if err != nil {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't sign refresh token: %v", err))
 		return

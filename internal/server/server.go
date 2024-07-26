@@ -49,6 +49,9 @@ func Init() (*Server, error) {
 	}
 
 	jwtSecretKey := []byte(uuid.NewString())
+	if cfg.JwtSecretKey != "" {
+		jwtSecretKey = []byte(cfg.JwtSecretKey)
+	}
 
 	commonController, err := controllers.Init(client, jwtSecretKey, cfg)
 	if err != nil {
@@ -63,6 +66,10 @@ func Init() (*Server, error) {
 		client:           client,
 		cfg:              cfg,
 	}, nil
+}
+
+func (server *Server) Start() error {
+	return nil
 }
 
 func (server *Server) Stop() {

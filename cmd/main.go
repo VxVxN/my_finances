@@ -13,6 +13,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error initializing server: %v", err)
 	}
+	if err = server.Start(); err != nil {
+		log.Fatalf("Error starting server: %v", err)
+	}
 	defer server.Stop()
 
 	commonMiddleware := []httptools.Middleware{
