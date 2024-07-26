@@ -69,5 +69,5 @@ func (ctrl *Controller) HistoricalBalance(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	httptools.SuccessResponse(w, r, resp)
+	httptools.SuccessResponse(w, resp)
 }

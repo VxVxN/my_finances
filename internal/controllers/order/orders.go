@@ -22,5 +22,5 @@ func (ctrl *Controller) Orders(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't get all orders: %v", err))
 		return
 	}
-	httptools.SuccessResponse(w, r, orders)
+	httptools.SuccessResponse(w, orders)
 }

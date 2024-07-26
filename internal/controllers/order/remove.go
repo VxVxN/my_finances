@@ -31,5 +31,5 @@ func (ctrl *Controller) RemoveOrder(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusNotFound, fmt.Errorf("order not found"))
 		return
 	}
-	httptools.SuccessResponse(w, r, nil)
+	httptools.SuccessResponse(w, nil)
 }

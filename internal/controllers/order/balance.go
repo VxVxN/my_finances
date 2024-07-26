@@ -67,5 +67,5 @@ func (ctrl *Controller) Balance(w http.ResponseWriter, r *http.Request) {
 			BalanceUsd: balance.Balance * price})
 		commonBalance += balance.Balance * price
 	}
-	httptools.SuccessResponse(w, r, ResponseBalance{Balance: commonBalance, Tokens: tokenBalance})
+	httptools.SuccessResponse(w, ResponseBalance{Balance: commonBalance, Tokens: tokenBalance})
 }

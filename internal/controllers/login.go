@@ -87,7 +87,7 @@ func (ctrl *Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httptools.SuccessResponse(w, r, LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken})
+	httptools.SuccessResponse(w, LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken})
 }
 
 func (ctrl *Controller) SignedJwtToken(payload jwt.MapClaims, jwtSecretKey []byte) (string, error) {

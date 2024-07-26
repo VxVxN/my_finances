@@ -10,6 +10,8 @@ type errorResponse struct {
 }
 
 func ErrResponse(w http.ResponseWriter, status int, err error) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(status)
 	data, err := json.Marshal(errorResponse{Error: err.Error()})
 	if err != nil {
@@ -19,10 +21,10 @@ func ErrResponse(w http.ResponseWriter, status int, err error) {
 	w.Write(data)
 }
 
-func SuccessResponse(w http.ResponseWriter, req *http.Request, resp interface{}) {
-	req.Header.Set("Access-Control-Allow-Methods", "GET, POST")
-	//req.Header.Set("Access-Control-Allow-Headers", "")
-	req.Header.Set("Access-Control-Allow-Origin", "http://localhost:3000")
+func SuccessResponse(w http.ResponseWriter, resp interface{}) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST")
+	//w.Header().Set("Access-Control-Allow-Headers", "")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	if resp == nil {
 		return

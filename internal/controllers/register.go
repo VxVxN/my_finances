@@ -35,5 +35,5 @@ func (ctrl *Controller) Register(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert register data: %v", err))
 		return
 	}
-	httptools.SuccessResponse(w, r, nil)
+	httptools.SuccessResponse(w, nil)
 }
