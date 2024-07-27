@@ -8,8 +8,11 @@ import (
 	"github.com/VxVxN/my_finances/pkg/httptools"
 )
 
+// Commit is a git commit hash, set by ldflags
+var Commit string
+
 func main() {
-	server, err := financeserver.Init()
+	server, err := financeserver.Init(Commit)
 	if err != nil {
 		log.Fatalf("Error initializing server: %v", err)
 	}

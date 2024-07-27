@@ -29,7 +29,9 @@ type Server struct {
 	cfg              *config.Config
 }
 
-func Init() (*Server, error) {
+func Init(commit string) (*Server, error) {
+	log.Logger = log.Logger.With().Str("commit", commit).Logger()
+
 	cfg, err := config.Init("config.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("can't init config: %v", err)
