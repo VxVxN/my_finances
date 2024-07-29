@@ -6,6 +6,7 @@ import (
 
 	financeserver "github.com/VxVxN/my_finances/internal/server"
 	"github.com/VxVxN/my_finances/pkg/httptools"
+	"github.com/rs/cors"
 )
 
 // Commit is a git commit hash, set by ldflags
@@ -39,7 +40,8 @@ func main() {
 
 	router.HandleFunc("POST /chart/historical-balance", httptools.MultipleMiddleware(server.ChartController.HistoricalBalance, commonMiddleware...))
 
-	if err := server.ListenAndServe(router); err != nil {
+	routerWithCors := cors.Default().Handler(router)
+	if err := server.ListenAndServe(routerWithCors); err != nil {
 		log.Fatalf("Cannot listen server: %v", err)
 	}
 }

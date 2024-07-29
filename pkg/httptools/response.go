@@ -10,9 +10,9 @@ type errorResponse struct {
 }
 
 func ErrResponse(w http.ResponseWriter, status int, err error) {
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PATCH, DELETE, PUT")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PATCH, DELETE, PUT")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(status)
 	data, err := json.Marshal(errorResponse{Error: err.Error()})
 	if err != nil {
@@ -24,9 +24,9 @@ func ErrResponse(w http.ResponseWriter, status int, err error) {
 }
 
 func SuccessResponse(w http.ResponseWriter, resp interface{}) {
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PATCH, DELETE, PUT")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PATCH, DELETE, PUT")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	if resp == nil {
 		return
