@@ -1,0 +1,6 @@
+port: 8080,
+disable_auth: false,
+mongo_url: "mongodb://mongo:27017",
+access_token_expired_hours: 24,
+refresh_token_expired_hours: 168,
+jwt_secret_key: "secret"
