@@ -106,6 +106,7 @@ func (server *Server) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				httptools.ErrResponse(w, http.StatusUnauthorized, fmt.Errorf("invalid access token: %v", err))
 				return
 			}
+			w.Header().Set("Authorization", accessToken.Value)
 		}
 		next.ServeHTTP(w, r)
 	}
