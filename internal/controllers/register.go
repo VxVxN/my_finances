@@ -14,6 +14,11 @@ type RegisterRequest struct {
 	Password string `bson:"password" json:"password"`
 }
 
+type RegisterResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 func (ctrl *Controller) Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 
@@ -35,5 +40,15 @@ func (ctrl *Controller) Register(w http.ResponseWriter, r *http.Request) {
 		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("can't insert register data: %v", err))
 		return
 	}
-	httptools.SuccessResponse(w, nil)
+
+	accessToken, refreshToken, err := ctrl.login(req.Username)
+	if err != nil {
+		httptools.ErrResponse(w, http.StatusInternalServerError, fmt.Errorf("failed to login: %v", err))
+		return
+	}
+
+	httptools.SuccessResponse(w, RegisterResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	})
 }
